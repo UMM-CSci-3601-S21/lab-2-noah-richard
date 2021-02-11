@@ -5,9 +5,9 @@ import java.io.IOException;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import umm3601.user.Database;
-import umm3601.user.DatabaseTodo;
+import umm3601.todo.DatabaseTodo;
 import umm3601.user.UserController;
-import umm3601.user.TodoController;
+import umm3601.todo.TodoController;
 
 public class Server {
 
