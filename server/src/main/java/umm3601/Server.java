@@ -45,10 +45,10 @@ public class Server {
     // List users, filtered using query parameters
     server.get("/api/users", ctx -> userController.getUsers(ctx));
 
-    // Get specific user
+    // Get specific todo
     server.get("/api/todos/:id", ctx -> todoController.getTodo(ctx));
 
-    // List users, filtered using query parameters
+    // List todos, filtered using query parameters
     server.get("/api/todos", ctx -> todoController.getTodos(ctx));
   }
 
