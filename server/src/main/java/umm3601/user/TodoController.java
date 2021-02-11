@@ -5,9 +5,9 @@ import io.javalin.http.NotFoundResponse;
 
 public class TodoController {
 
-  private Database database;
+  private DatabaseTodo database;
 
-  public TodoController(Database database) {
+  public TodoController(DatabaseTodo database) {
     this.database = database;
   }
 
@@ -20,12 +20,10 @@ public class TodoController {
     } else {
       throw new NotFoundResponse("No user with id " + id + " was found.");
     }
-
-    public void getTodos (Context ctx) {
-      Todo[] todos = database.listTodos(ctx.queryParamMap());
-      ctx.json(todos);
-    }
   }
 
-
+  public void getTodos(Context ctx) {
+    Todo[] todos = database.listTodos(ctx.queryParamMap());
+    ctx.json(todos);
+  }
 }
