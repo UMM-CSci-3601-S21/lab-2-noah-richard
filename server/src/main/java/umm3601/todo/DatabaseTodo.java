@@ -46,6 +46,22 @@ public class DatabaseTodo {
         throw new BadRequestResponse("Specified limit '" + limitParam + "' is not a number.");
       }
     }
+    // Filter if status defined
+    if (queryParams.containsKey("status")) {
+      String statusParam = queryParams.get("status").get(0);
+      boolean statusBool;
+      if (statusParam.equals("complete")) {
+        statusBool = true;
+      } else {
+        statusBool = false;
+      }
+      filteredTodos = filterTodosByStatus(filteredTodos, statusBool);
+    }
+    // Filter if contains is defined
+    if (queryParams.containsKey("contains")) {
+      String containsParam = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContains(filteredTodos, containsParam);
+    }
 
     return filteredTodos;
   }
@@ -63,5 +79,25 @@ public class DatabaseTodo {
       limitedTodos[limitArray] = todos[limitArray];
     }
     return limitedTodos;
+  }
+
+  /**
+   * Gets an array of all todos having the target status (complete/incomplete = true/false)
+   * @param todos the list of todos to filter by status
+   * @param statusBool the status we want to filter by; true is "complete", false is "incomplete"
+   * @return an array of todos having the same status as given
+   */
+  public Todo[] filterTodosByStatus(Todo[] todos, boolean statusBool) {
+    return Arrays.stream(todos).filter(x -> x.status == statusBool).toArray(Todo[]::new);
+  }
+
+  /**
+   * Gets an array of all todos having the target string in their bodies
+   * @param todos the list of todos to filter by the string
+   * @param containsParam a string to search the bodies of the todos for
+   * @return an array of todos whose bodies contain the given string
+   */
+  public Todo[] filterTodosByContains(Todo[] todos, String containsParam) {
+    return Arrays.stream(todos).filter(x -> x.body.contains(containsParam) == true).toArray(Todo[]::new);
   }
 }
