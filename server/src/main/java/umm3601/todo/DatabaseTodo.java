@@ -31,21 +31,6 @@ public class DatabaseTodo {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    // Limit how many todos appear
-    if (queryParams.containsKey("limit")) {
-      String limitParam = queryParams.get("limit").get(0);
-      try {
-        int targetLimit = Integer.parseInt(limitParam);
-        if (targetLimit > filteredTodos.length){
-          targetLimit = filteredTodos.length;
-        } else if (targetLimit < 0) {
-          throw new BadRequestResponse("Cannot enter a negative limit value.");
-        }
-        filteredTodos = filterTodosByLimit(filteredTodos, targetLimit);
-      } catch (NumberFormatException e) {
-        throw new BadRequestResponse("Specified limit '" + limitParam + "' is not a number.");
-      }
-    }
     // Filter if status defined
     if (queryParams.containsKey("status")) {
       String statusParam = queryParams.get("status").get(0);
@@ -61,6 +46,26 @@ public class DatabaseTodo {
     if (queryParams.containsKey("contains")) {
       String containsParam = queryParams.get("contains").get(0);
       filteredTodos = filterTodosByContains(filteredTodos, containsParam);
+    }
+    //Filter by owner
+    if(queryParams.containsKey("owner")) {
+      String ownerParam = queryParams.get("owner").get(0);
+      filteredTodos = filterTodosByOwner(filteredTodos, ownerParam);
+    }
+    // Limit how many todos appear
+    if (queryParams.containsKey("limit")) {
+      String limitParam = queryParams.get("limit").get(0);
+      try {
+        int targetLimit = Integer.parseInt(limitParam);
+        if (targetLimit > filteredTodos.length){
+          targetLimit = filteredTodos.length;
+        } else if (targetLimit < 0) {
+          throw new BadRequestResponse("Cannot enter a negative limit value.");
+        }
+        filteredTodos = filterTodosByLimit(filteredTodos, targetLimit);
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + limitParam + "' is not a number.");
+      }
     }
 
     return filteredTodos;
@@ -99,5 +104,15 @@ public class DatabaseTodo {
    */
   public Todo[] filterTodosByContains(Todo[] todos, String containsParam) {
     return Arrays.stream(todos).filter(x -> x.body.contains(containsParam) == true).toArray(Todo[]::new);
+  }
+
+  /**
+   * Gets an array of all todos having the specified owner
+   * @param todos the list of todos to filter by owner
+   * @param ownerParam the owner to filter the todos by
+   * @return an array of todos who have the specified owner
+   */
+  public Todo[] filterTodosByOwner(Todo[] todos, String ownerParam) {
+    return Arrays.stream(todos).filter(x -> x.owner.equals(ownerParam) == true).toArray(Todo[]::new);
   }
 }
