@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 import com.google.gson.Gson;
 
@@ -52,6 +53,11 @@ public class DatabaseTodo {
       String ownerParam = queryParams.get("owner").get(0);
       filteredTodos = filterTodosByOwner(filteredTodos, ownerParam);
     }
+    // Filter by category
+    if (queryParams.containsKey("category")) {
+      String categoryParam = queryParams.get("category").get(0);
+      filteredTodos = filterTodosByCategory(filteredTodos, categoryParam);
+    }
     // Limit how many todos appear
     if (queryParams.containsKey("limit")) {
       String limitParam = queryParams.get("limit").get(0);
@@ -66,6 +72,11 @@ public class DatabaseTodo {
       } catch (NumberFormatException e) {
         throw new BadRequestResponse("Specified limit '" + limitParam + "' is not a number.");
       }
+    }
+    // Order entries alphabetically
+    if (queryParams.containsKey("orderBy")) {
+      String orderParam = queryParams.get("orderBy").get(0);
+      filteredTodos = orderedTodos(filteredTodos, orderParam);
     }
 
     return filteredTodos;
@@ -113,6 +124,65 @@ public class DatabaseTodo {
    * @return an array of todos who have the specified owner
    */
   public Todo[] filterTodosByOwner(Todo[] todos, String ownerParam) {
-    return Arrays.stream(todos).filter(x -> x.owner.equals(ownerParam) == true).toArray(Todo[]::new);
+    return Arrays.stream(todos).filter(x -> x.owner.contains(ownerParam) == true).toArray(Todo[]::new);
+  }
+
+  /**
+   * Gets an array of todos having the specified category parameter
+   * @param todos the list of todos to filter by category
+   * @param categoryParam the category to filter the todos by
+   * @return an array of todos who have the specified category
+   */
+  public Todo[] filterTodosByCategory(Todo[] todos, String categoryParam) {
+    return Arrays.stream(todos).filter(x -> x.category.contains(categoryParam) == true).toArray(Todo[]::new);
+  }
+
+  /**
+   * Sorts the todo list alphabetically by the specified field
+   * @param todos the list of todos to sort
+   * @param orderParam the parameter to to sort by (owner, category, body, or status)
+   * @return a sorted array of todos
+   */
+  public Todo[] orderedTodos(Todo[] todos, String orderParam) {
+    Todo[] sortedTodos = todos;
+    switch(orderParam) {
+      case "owner":
+      Arrays.sort(sortedTodos, new Comparator<Todo>() {
+        @Override
+        public int compare(Todo t1, Todo t2) {
+          return t1.owner.compareTo(t2.owner);
+        }
+      });
+      break;
+      case "category":
+      Arrays.sort(sortedTodos, new Comparator<Todo>() {
+        @Override
+        public int compare(Todo t1, Todo t2) {
+          return t1.category.compareTo(t2.category);
+        }
+      });
+      break;
+      case "body":
+      Arrays.sort(sortedTodos, new Comparator<Todo>() {
+        @Override
+        public int compare(Todo t1, Todo t2) {
+          return t1.body.compareTo(t2.body);
+        }
+      });
+      break;
+      //This sorts the status by their boolean names; so "incomplete" todos will come before "complete" ones
+      case "status":
+      Arrays.sort(sortedTodos, new Comparator<Todo>() {
+        @Override
+        public int compare(Todo t1, Todo t2) {
+          return Boolean.toString(t1.status).compareTo(Boolean.toString(t2.status));
+        }
+      });
+      break;
+      default:
+      // This should never happen
+      throw new BadRequestResponse("This is not a valid sorting category.");
+    }
+    return sortedTodos;
   }
 }
