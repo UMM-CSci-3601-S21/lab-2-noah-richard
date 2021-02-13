@@ -57,6 +57,11 @@ public class DatabaseTodo {
       }
       filteredTodos = filterTodosByStatus(filteredTodos, statusBool);
     }
+    // Filter if contains is defined
+    if (queryParams.containsKey("contains")) {
+      String containsParam = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContains(filteredTodos, containsParam);
+    }
 
     return filteredTodos;
   }
@@ -84,5 +89,15 @@ public class DatabaseTodo {
    */
   public Todo[] filterTodosByStatus(Todo[] todos, boolean statusBool) {
     return Arrays.stream(todos).filter(x -> x.status == statusBool).toArray(Todo[]::new);
+  }
+
+  /**
+   * Gets an array of all todos having the target string in their bodies
+   * @param todos the list of todos to filter by the string
+   * @param containsParam a string to search the bodies of the todos for
+   * @return an array of todos whose bodies contain the given string
+   */
+  public Todo[] filterTodosByContains(Todo[] todos, String containsParam) {
+    return Arrays.stream(todos).filter(x -> x.body.contains(containsParam) == true).toArray(Todo[]::new);
   }
 }
