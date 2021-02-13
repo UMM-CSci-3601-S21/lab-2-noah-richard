@@ -31,6 +31,37 @@ public class DatabaseTodo {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
+    // Limit how many todos appear
+    if (queryParams.containsKey("limit")) {
+      String limitParam = queryParams.get("limit").get(0);
+      try {
+        int targetLimit = Integer.parseInt(limitParam);
+        if (targetLimit > filteredTodos.length){
+          targetLimit = filteredTodos.length;
+        } else if (targetLimit < 0) {
+          throw new BadRequestResponse("Cannot enter a negative limit value.");
+        }
+        filteredTodos = filterTodosByLimit(filteredTodos, targetLimit);
+      } catch (NumberFormatException e) {
+        throw new BadRequestResponse("Specified limit '" + limitParam + "' is not a number.");
+      }
+    }
+
     return filteredTodos;
+  }
+
+  /**
+   * Get an array limited to a certain number of entries.
+   *
+   * @param todos the list of todos to limit
+   * @param limitParam the number of todos wanted
+   * @return an array with a limited number of entries
+   */
+  public Todo[] filterTodosByLimit(Todo[] todos, int limitParam) {
+    Todo[] limitedTodos = new Todo[limitParam];
+    for (int limitArray = 0; limitArray < limitParam; limitArray++) {
+      limitedTodos[limitArray] = todos[limitArray];
+    }
+    return limitedTodos;
   }
 }
