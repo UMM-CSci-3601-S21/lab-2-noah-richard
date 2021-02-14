@@ -77,6 +77,14 @@ public class Server {
     return userController;
   }
 
+  /***
+   * Create a database using the json file, use it as data source for a new
+   * TodoController
+   *
+   * Constructing the controller might throw an IOException if there are problems
+   * reading from the JSON "database" file. If that happens we'll print out an
+   * error message exit the program.
+   */
   private static TodoController buildTodoController() {
     TodoController todoController = null;
 
