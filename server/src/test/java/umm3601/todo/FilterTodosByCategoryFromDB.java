@@ -22,5 +22,6 @@ public class FilterTodosByCategoryFromDB {
 
     Todo[] homeworkTodos = db.filterTodosByCategory(allTodos, "homework");
     assertEquals(79, homeworkTodos.length, "Incorrect number of todos with homework category.");
+
   }
 }
