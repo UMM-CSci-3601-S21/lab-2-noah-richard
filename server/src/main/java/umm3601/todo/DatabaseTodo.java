@@ -11,6 +11,14 @@ import com.google.gson.Gson;
 
 import io.javalin.http.BadRequestResponse;
 
+/**
+ * A fake "database" of todo info
+ * <p>
+ * Since we don't want to complicate this lab with a real database, we're going
+ * to instead just read a bunch of todo data from a specified JSON file, and
+ * then provide various database-like methods that allow the `TodoController` to
+ * "query" the "database".
+ */
 public class DatabaseTodo {
 
   private Todo[] allTodos;
@@ -21,14 +29,29 @@ public class DatabaseTodo {
     allTodos = gson.fromJson(reader, Todo[].class);
   }
 
+  /**
+   * Gets the size of an array of todos
+   * @return the size of the array of all todos
+   */
   public int size() {
     return allTodos.length;
   }
 
+  /**
+   * Gets a todo object by requesting its specific ID
+   * @param id a given ID to search for
+   * @return a todo with the given ID
+   */
   public Todo getTodo(String id) {
     return Arrays.stream(allTodos).filter(x -> x._id.equals(id)).findFirst().orElse(null);
   }
 
+  /**
+   * Get an array of all the todos satisfying the queries in the params.
+   *
+   * @param queryParams map of key-value pairs for the query
+   * @return an array of all the todos matching the given criteria
+   */
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 

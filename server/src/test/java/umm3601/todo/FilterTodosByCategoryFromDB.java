@@ -11,6 +11,9 @@ import java.util.Map;
 import org.jetbrains.annotations.TestOnly;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests the umm3601.todo.DatabaseTodo filterTodosByCategory with _category_ query
+ */
 public class FilterTodosByCategoryFromDB {
   @Test
   public void filterTodoByCategory() throws IOException {

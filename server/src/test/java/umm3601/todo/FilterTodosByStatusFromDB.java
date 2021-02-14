@@ -11,6 +11,9 @@ import java.util.Map;
 import org.jetbrains.annotations.TestOnly;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Testing the filterTodosByStatus method from DatabaseTodo with different _status_ queries.
+ */
 public class FilterTodosByStatusFromDB {
     @Test
     public void filterTodoByStatus() throws IOException {
